@@ -9,33 +9,12 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
     @ratings = @all_ratings
-    redirect = false
-
-    if params[:sort_param]
-      session[:sort_param] = params[:sort_param]
-      @sort = params[:sort_param]
-    elsif session[:sort_param]
-      redirect = true
-      @sort = session[:sort_param]
-    end
-
-    if params[:ratings].class.name.include?('Hash')
-      session[:ratings] = params[:ratings]
+    if params[:ratings]
       @ratings = params[:ratings].keys
       @movies = Movie.order(params[:sort_param]).find_all_by_rating(@ratings)
-      
-    elsif session[:ratings].class.name.include?('Hash')
-      redirect = true
-      @ratings = session[:ratings].keys
-      @movies = Movie.order(params[:sort_param]).find_all_by_rating(@ratings)
-      
     else
       @movies = Movie.order(params[:sort_param])
     end
-    if redirect = true
-      redirect_to movies_path(:sort_param => @sort, :ratings => @ratings) unless (params[:ratings] or params[:sort_param])
-    end
-    
   end
 
   def new
